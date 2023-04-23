@@ -41,6 +41,7 @@ def jogador():
 
 while run:
     
+    # Esse bloco de código faz com que o fundo irá ficar repetindo após chegar em X-tamanho. 
     win.fill((0,0,0))
     win.blit(background, (i, 0))
     win.blit(background, (largura+i, 0))
@@ -49,7 +50,7 @@ while run:
         i = 0
     i -= 5
     
-    # Irá encerrar o loop do jogo. 
+    # Irá encerrar o loop do jogo caso o X seja clicado.
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
@@ -57,17 +58,19 @@ while run:
     # Keys é a chave para caso alguma tecla seja pressionada. 
     keys = pygame.key.get_pressed()
 
-    # Com essas configurações, o jogador é impedido de se mover demais para a esquerda.
+    # Com essas configurações, o jogador é impedido de se mover demais para cima
     if keys[pygame.K_UP] and jogador_y > 0:
         jogador_y -= vel
     
-    # Com essas configurações, o jogador é impedido de se mover demais para a dirieta. 
+    # Com essas configurações, o jogador é impedido de se mover demais para baixo
     if keys[pygame.K_DOWN] and jogador_y < 600 - altura_jogador:
        jogador_y += vel
 
+    # Com essas configurações, o jogador é impedido de se mover demais para a esquerda. 
     if keys[pygame.K_LEFT] and jogador_x > 0:
         jogador_x -= vel
     
+    # Com essas configurações, o jogador é impedido de passar de uma certa parte da tela, mais ou menos na metade.
     if keys[pygame.K_RIGHT] and jogador_x < 300 - largura_jogador:
         jogador_x += vel
 
@@ -75,6 +78,7 @@ while run:
     clock.tick(55)
     jogador()
 
+    # Display update irá atualizar um pedaço da tela, geralmente a tela toda.
     pygame.display.update()
 
 # Fecha a janela
