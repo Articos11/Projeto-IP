@@ -1,6 +1,7 @@
 # Comando para importar o pygame no programa.
 import pygame
 from pygame.locals import *
+import random
 
 # É ativado a biblioteca de pygame usando este comando.
 pygame.init()
@@ -17,17 +18,24 @@ background = pygame.image.load("images/background_terra.jpg")
 background = pygame.transform.scale(background, (largura, altura))
 spaceship = pygame.image.load("images/Cinza.png")
 spaceship = pygame.transform.scale(spaceship, (80, 80))
+asteroid = pygame.image.load("images/asteroide.png")
+asteroid = pygame.transform.scale(asteroid, (80, 80))
+explosion_asteroid = pygame.image.load("images/explosion.gif")
+
 # O i servirá para controlar o local da imagem de fundo.
 i = 0 
-
-
-# Essas são as coordenadas atuais do jogador.
-jogador_x = 130
-jogador_y = 270
 
 # Essas são as dimensões do objeto.
 largura_jogador = 20
 altura_jogador = 20
+
+# Aqui serão inseridas as informações de colisão da espaço-nave.
+rect = spaceship.get_rect()
+rect.x = 130
+rect.y = 270
+
+# Aqui serão inseridas as informações de colisão do asteroide.
+rect_obstaculo = asteroid.get_rect()
 
 # Velocidade do objeto. 
 vel = 10
@@ -36,8 +44,15 @@ clock = pygame.time.Clock()
 # Controlador do pygame para manter o jogo rodando.
 run = True
 
+# Quaisquer configurações feitas ao jogador serão alteradas aqui.
 def jogador():
-    win.blit(spaceship, (jogador_x, jogador_y))
+    win.blit(spaceship, rect)
+
+# Quaisquer configurações feitas aos obstaculos serão feitas aqui.
+def obstaculos():
+    win.blit(asteroid, (0,0) , rect_obstaculo)
+    if rect.colliderect(rect_obstaculo): 
+        return win.blit(explosion_asteroid, rect_obstaculo)
 
 while run:
     
@@ -59,27 +74,27 @@ while run:
     keys = pygame.key.get_pressed()
 
     # Com essas configurações, o jogador é impedido de se mover demais para cima
-    if keys[pygame.K_UP] and jogador_y > 0:
-        jogador_y -= vel
-    
+    if keys[pygame.K_UP] and rect.y > 0:
+        rect.y -= vel
     # Com essas configurações, o jogador é impedido de se mover demais para baixo
-    if keys[pygame.K_DOWN] and jogador_y < 600 - altura_jogador:
-       jogador_y += vel
+    if keys[pygame.K_DOWN] and rect.y < 545 - altura_jogador:
+       rect.y += vel
 
     # Com essas configurações, o jogador é impedido de se mover demais para a esquerda. 
-    if keys[pygame.K_LEFT] and jogador_x > 0:
-        jogador_x -= vel
+    if keys[pygame.K_LEFT] and rect.x > 0:
+        rect.x -= vel
     
     # Com essas configurações, o jogador é impedido de passar de uma certa parte da tela, mais ou menos na metade.
-    if keys[pygame.K_RIGHT] and jogador_x < 300 - largura_jogador:
-        jogador_x += vel
+    if keys[pygame.K_RIGHT] and rect.x < 300 - largura_jogador:
+        rect.x += vel
 
     # Isso manterá os frames em 55, impedindo que o jogo se comporte de maneiras estranhas em monitores com refresh rate maiores.
     clock.tick(55)
+    # São chamadas todas as funções do jogo aqui. 
     jogador()
-
+    obstaculos()    
     # Display update irá atualizar um pedaço da tela, geralmente a tela toda.
-    pygame.display.update()
+    pygame.display.flip()
 
 # Fecha a janela
 pygame.quit()
