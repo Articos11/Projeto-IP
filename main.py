@@ -35,7 +35,7 @@ class Jogador(object):
         # Posição Y do jogador. 
         self.y = altura//2
         # Aqui serão gerados os controles de rotação da nave. 
-        self.angulo = 0
+        self.angulo = 270
         self.rotacao = pygame.transform.rotate(self.imagem, self.angulo)
         # Rect é o indicador de colisão da nave. 
         self.rotacaoRect = self.rotacao.get_rect()
@@ -99,7 +99,7 @@ def tela():
     if (i ==- largura):
         display.blit(background, (largura+i, 0))
         i = 0
-    i -= 50
+    i -= 5
 
     player.draw(display)
 
@@ -122,6 +122,15 @@ while rodar:
             player.moverFrente()
         if keys[pygame.K_DOWN]:
             player.moverTras()
+        
+        if player.x <= 35:
+            player.x = 35
+        if player.x >= 765:
+            player.x = 765
+        if player.y <= 30:
+            player.y = 30
+        if player.y >= 575:
+            player.y = 575
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
