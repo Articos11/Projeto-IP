@@ -18,3 +18,5 @@ asteroide_100 = pygame.image.load("Assets/asteroide_100.png")
 asteroide_150 = pygame.image.load("Assets/asteroide_150.png")
 disparo_jogador = pygame.image.load("Assets/laser1.png")
 disparo_jogador = pygame.transform.scale(disparo_jogador, (50,50))
+raio = pygame.image.load("Assets/mult_disp.png")
+

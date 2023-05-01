@@ -1,10 +1,11 @@
 # São importados as bibliotecas e os scripts externos.
 import pygame
 import random
+import projeteis
+import atributo_tiro
 import asteroides
 import jogador
 import configuracoes
-import projeteis
 
 # É iniciado o pygame aqui. 
 pygame.init()
@@ -13,10 +14,13 @@ pygame.init()
 clock = pygame.time.Clock()
 FPS = 60
 rodar = True
+
 # Variavel de controle de mapa.
 i = 0
 vidas = 3
 pontos = 0
+tiros_rapidos = False
+multiplos_inicio = -1
 l_nav_vida = [pygame.Rect(10 + i*30, 10, configuracoes.sprite_vidas.get_width(), configuracoes.sprite_vidas.get_height()) for i in range(vidas)]
 
 # É criada uma função para que a tela seja 'refeita' a cada frame.
@@ -30,7 +34,7 @@ def tela():
     f_tentar_nov = pygame.font.SysFont('arial', 40)
     tentar_nov = f_tentar_nov.render(f'Pressione Espaço para jogar de novo', 1, (255, 255, 255))
     sair = f_tentar_nov.render(f'ou Esc para sair', 1, (255, 255, 255))
-    
+
     #Background
     configuracoes.display.fill((0,0,0))
     configuracoes.display.blit(configuracoes.background, (i, 0))
@@ -46,6 +50,14 @@ def tela():
         d.desenhar_disparo(configuracoes.display)
         if d.checarForaTela():
             tiros.pop(tiros.index(d))
+    for t in multiplos_tiros:
+        t.draw(configuracoes.display)
+    #barra de contagem de tempo que o jogador tera com o tiros rapidos
+    if tiros_rapidos :
+        #quadrado preto
+        pygame.draw.rect(configuracoes.display, (0,0,0), [configuracoes.largura//2 -51, 19, 102, 22])
+        #barra que vai mudar com o tempo
+        pygame.draw.rect(configuracoes.display, (255,255,255), [configuracoes.largura//2 -50, 20, 100 - 100 * (contagem_ast-multiplos_inicio)/500, 20])
     #Blit das vidas e dos pontos
     jogador.player.draw(configuracoes.display)
     if gameover: #Texto gameover e tentar novamente
@@ -57,10 +69,10 @@ def tela():
         configuracoes.display.blit(configuracoes.sprite_vidas, nave)
     pygame.display.update()
 
-
 tiros = []
 cometas = []
 contagem_ast = 0
+multiplos_tiros = [atributo_tiro.variavel_auxiliar]
 gameover = False
 
 while rodar:
@@ -69,9 +81,14 @@ while rodar:
     contagem_ast += 1
 
     if not gameover:
+        #aparecimento dos asteroides
         if contagem_ast % 75 == 0:
             ran = random.choice([1,1,1,2,2,3])
             cometas.append(asteroides.Asteroide(ran))
+        #aparecimento do atributo de tiros multiplos
+        if contagem_ast % 1050 == 0:
+            multiplos_tiros.append(atributo_tiro.variavel_auxiliar)
+
         # Aqui é como os disparos são chamados.
         for d in tiros:
             d.mover_disparo()
@@ -79,7 +96,7 @@ while rodar:
         for a in cometas:
             a.x += a.xvelocidade
             a.y += a.yvelocidade
-            #Checagem de colisão com a nave e diminuição das vidas
+                                #Checagem de colisão com a nave e diminuição das vidas
             if (jogador.player.x >= a.x and jogador.player.x <= a.x + a.w) or (jogador.player.x + jogador.player.largura >= a.x and jogador.player.x + jogador.player.largura <= a.x + a.w):
                 if (jogador.player.y >= a.y and jogador.player.y <= a.y + a.h) or (jogador.player.y + jogador.player.altura >= a.y and jogador.player.y + jogador.player.altura <= a.y + a.h):
                     vidas -= 1
@@ -90,7 +107,7 @@ while rodar:
                     break
 
             # Checagem de colisão com disparos.
-            for d in tiros:
+            for d in tiros :
                 # Irá checar se o disparo colide com a largura total do asteroide.
                 if (d.x >= a.x and d.x <= a.x + a.w) or d.x + d.lar_disparo >= a.x and d.x + d.lar_disparo <= a.x + a.w:
                     # Se sim, irá checar em qual altura o disparo colidiu com o asteroide. 
@@ -121,8 +138,30 @@ while rodar:
 
                         cometas.pop(cometas.index(a))
                         tiros.pop(tiros.index(d))
+                        break 
+        
+            for t in multiplos_tiros:
+                t.x += t.xvelocidade
+                t.y += t.yvelocidade
+                
+                for d in tiros:
+                    # Irá checar se o disparo colide com a largura total da imagem dos tiros multiplos.
+                    if (d.x >= t.x and d.x <= t.x + t.w) or d.x + d.lar_disparo >= t.x and d.x + d.lar_disparo <= t.x + t.w:
+                        # Se sim, irá checar em qual altura o disparo colidiu com o objeto. 
+                        if (d.y >= t.y and d.y <= t.y + t.h) or d.y + d.alt_disparo >= t.y and d.y + d.alt_disparo <= t.y + t.h:
+                            tiros_rapidos = True
+                            multiplos_tiros.pop(multiplos_tiros.index(t))
+                            multiplos_inicio = contagem_ast
+                            tiros.pop(tiros.index(d))
+                            break
         if vidas <= 0:
             gameover = True
+        #vai verificar qnt tempo ja se passou desde que o tiro multiplo foi coletado
+        if multiplos_inicio != -1 :
+            # vai ver se passou de 500 
+            if contagem_ast - multiplos_inicio > 500:
+                tiros_rapidos = False
+                multiplos_inicio = -1
 
         # Aqui as teclas são pressionadas e podem ser seguradas para movimentos continuos.
         keys = pygame.key.get_pressed()
@@ -136,8 +175,9 @@ while rodar:
             jogador.player.moverTras()
         if keys[pygame.K_ESCAPE]:
             rodar = False
-
-                
+        if keys[pygame.K_SPACE]:
+            if tiros_rapidos:
+                tiros.append(projeteis.Disparos())
 
         # Esse bloco irá impedir que o jogador saia das dimensões da tela. 
         if jogador.player.x <= 35:
@@ -149,6 +189,7 @@ while rodar:
         if jogador.player.y >= 615:
             jogador.player.y = 615
 
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             rodar = False
@@ -156,7 +197,8 @@ while rodar:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 if not gameover:
-                    tiros.append(projeteis.Disparos())
+                    if not tiros_rapidos:
+                        tiros.append(projeteis.Disparos())
                 else:
                     #Esse bloco será a parte de game over, para voltar a jogar basta apertar a tecla "espaço"
                     gameover = False
@@ -166,6 +208,6 @@ while rodar:
                     cometas.clear()
             elif event.key == pygame.K_ESCAPE:
                 rodar = False
-    tela()
-    
+    tela() 
+
 pygame.quit()
