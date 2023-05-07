@@ -1,132 +1,119 @@
 # São importados as bibliotecas e os scripts externos.
 import pygame
-import math
+import random
+import tela
+import menu
+import projeteis
+import atributo_tiro
+import asteroides
+import jogador
+import configuracoes
+import colisoes
+import atributo_vida
 
 # É iniciado o pygame aqui. 
 pygame.init()
-
-############################## CONFIGURAÇÕES JANELA ######################### 
-altura = 600
-largura = 800
-
-display = pygame.display.set_mode((largura, altura))
-pygame.display.set_caption('Into the void')
-background = pygame.image.load("Assets/starbg.png").convert()
-background = pygame.transform.scale(background, (largura, altura))
-sprite_jogador = pygame.image.load("Assets/apontada_frente.png")
-sprite_jogador = pygame.transform.scale(sprite_jogador, (80, 80))
-# Variavel de controle de mapa. 
-i = 0
 
 # Controle de velocidade. 
 clock = pygame.time.Clock()
 FPS = 60
 rodar = True
 
-
-####################### CONTROLES JOGADOR ###########################
-class Jogador(object):
-    def __init__(self):
-        self.imagem = sprite_jogador
-        self.largura = self.imagem.get_width()
-        self.altura = self.imagem.get_height()
-        # Posição X do jogador.
-        self.x = largura//2
-        # Posição Y do jogador. 
-        self.y = altura//2
-        # Aqui serão gerados os controles de rotação da nave. 
-        self.angulo = 0
-        self.rotacao = pygame.transform.rotate(self.imagem, self.angulo)
-        # Rect é o indicador de colisão da nave. 
-        self.rotacaoRect = self.rotacao.get_rect()
-        self.rotacaoRect.center = (self.x, self.y)
-        # Aqui são criadas variáveis para controlar o centro 'gravitacional' da nave. Sua rotação, por assim dizer.
-        self.cosseno = math.cos(math.radians(self.angulo + 90))
-        self.seno = math.sin(math.radians(self.angulo + 90))
-        self.frente = (self.x + self.cosseno * self.largura//2, self.y - self.seno * self.altura//2) 
-
-
-    def draw(self, display):
-        # display.blit(self.imagem, [self.x, self.y, self.largura, self.altura])
-        display.blit(self.rotacao, self.rotacaoRect)
-
-    def virarEsquerda(self):
-        self.angulo += 3
-        self.rotacao = pygame.transform.rotate(self.imagem, self.angulo)
-        self.rotacaoRect = self.rotacao.get_rect()
-        self.rotacaoRect.center = (self.x, self.y)
-        self.cosseno = math.cos(math.radians(self.angulo + 90))
-        self.seno = math.sin(math.radians(self.angulo + 90))
-        self.head = (self.x + self.cosseno + self.largura//2, self.y + self.seno + self.altura//2)
-
-    def virarDireita(self):
-        self.angulo -= 3
-        self.rotacao = pygame.transform.rotate(self.imagem, self.angulo)
-        self.rotacaoRect = self.rotacao.get_rect()
-        self.rotacaoRect.center = (self.x, self.y)
-        self.cosseno = math.cos(math.radians(self.angulo + 90))
-        self.seno = math.sin(math.radians(self.angulo + 90))
-        self.head = (self.x + self.cosseno + self.largura//2, self.y + self.seno + self.altura//2)
-
-    def moverFrente(self):
-        self.x += self.cosseno * 6
-        self.y -= self.seno * 6
-        self.rotacao = pygame.transform.rotate(self.imagem, self.angulo)
-        self.rotacaoRect = self.rotacao.get_rect()
-        self.rotacaoRect.center = (self.x, self.y)
-        self.cosseno = math.cos(math.radians(self.angulo + 90))
-        self.seno = math.sin(math.radians(self.angulo + 90))
-        self.head = (self.x + self.cosseno + self.largura//2, self.y + self.seno + self.altura//2)
-
-    def moverTras(self):
-        self.x -= self.cosseno * 6
-        self.y += self.seno * 6
-        self.rotacao = pygame.transform.rotate(self.imagem, self.angulo)
-        self.rotacaoRect = self.rotacao.get_rect()
-        self.rotacaoRect.center = (self.x, self.y)
-        self.cosseno = math.cos(math.radians(self.angulo + 90))
-        self.seno = math.sin(math.radians(self.angulo + 90))
-        self.head = (self.x + self.cosseno + self.largura//2, self.y + self.seno + self.altura//2)
-
-############################# LOOP DO JOGO ##################################
-
-# É criada uma função para que a tela seja 'refeita' a cada frame.
-def tela():
-    global i
-    display.fill((0,0,0))
-    display.blit(background, (i, 0))
-    display.blit(background, (largura+i, 0))
-    if (i ==- largura):
-        display.blit(background, (largura+i, 0))
-        i = 0
-    i -= 50
-
-    player.draw(display)
-
-player = Jogador()
-
-gameover = False
 while rodar:
-
-    tela()
 
     clock.tick(FPS)
 
-    if not gameover:
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_LEFT]:
-            player.virarEsquerda()
-        if keys[pygame.K_RIGHT]:
-            player.virarDireita()
-        if keys[pygame.K_UP]:
-            player.moverFrente()
-        if keys[pygame.K_DOWN]:
-            player.moverTras()
+    if not tela.gameover:
+        if configuracoes.pausado:
+            if configuracoes.botao_Voltar.desenhar_bot(configuracoes.display):
+                configuracoes.pausado = False
+            elif configuracoes.botao_Sair.desenhar_bot(configuracoes.display):
+                rodar = False
+        else:
+            tela.contagem_ast += 1
+            #aparecimento dos asteroides
+            if tela.contagem_ast % 75 == 0:
+                ran = random.choice([1,1,1,2,2,3])
+                tela.cometas.append(asteroides.Asteroide(ran))
+            #aparecimento do atributo de tiros multiplos
+            if tela.contagem_ast % 1800 == 0:
+                tela.multiplos_tiros.append(atributo_tiro.Infinitos())
+            if tela.contagem_ast % 2800 == 0 and tela.vidas < 3:
+                tela.vidas_extras.append(atributo_vida.Vida())
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            rodar = False
+            # Aqui é como os projeteis são chamados.
+            for d in tela.tiros:
+                d.mover_disparo()
+            
+            for a in tela.cometas:
+                a.x += a.xvelocidade
+                a.y += a.yvelocidade
+                #Checagem de colisão com a nave e diminuição das vidas
+                if colisoes.nave_ast(jogador.player,a):
+                    break
+                # Checagem de colisão com disparos.
+                for d in tela.tiros :
+                    if colisoes.projetil_ast(d,a):
+                        break
+            
+            for t in tela.multiplos_tiros:
+                t.x += t.xvelocidade
+                t.y += t.yvelocidade
+                if colisoes.atributo_tiro(t,jogador.player):
+                    break
 
-    pygame.display.update()
+            for e in tela.vidas_extras:
+                e.x += e.xvelocidade
+                e.y += e.yvelocidade
+                if colisoes.atributo_vida(e,jogador.player):
+                    tela.l_nav_vida = l_nav_vida = [pygame.Rect(10 + i*30, 10, configuracoes.sprite_vidas.get_width(), configuracoes.sprite_vidas.get_height()) for i in range(tela.vidas)]
+                    break
 
+            if tela.vidas <= 0:
+                tela.gameover = True
+            #vai verificar qnt tempo ja se passou desde que o tiro multiplo foi coletado
+            if tela.multiplos_inicio != -1 :
+                # vai ver se passou de 500 
+                if tela.contagem_ast - tela.multiplos_inicio > 500:
+                    tela.tiros_rapidos = False
+                    tela.multiplos_inicio = -1
+
+            # Aqui as teclas são pressionadas e podem ser seguradas para movimentos continuos.
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_LEFT]:
+                jogador.player.virarEsquerda()
+            if keys[pygame.K_RIGHT]:
+                jogador.player.virarDireita()
+            if keys[pygame.K_UP]:
+                jogador.player.moverFrente()
+            if keys[pygame.K_DOWN]:
+                jogador.player.moverTras()
+            if keys[pygame.K_SPACE]:
+                if tela.tiros_rapidos:
+                    tela.tiros.append(projeteis.Disparos())
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                rodar = False
+            # Os disparos foram inseridos aqui para impedir que o jogador dispare infinitas vezes.  
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    if not tela.gameover:
+                        if not tela.tiros_rapidos:
+                            tela.tiros.append(projeteis.Disparos())
+                elif event.key == pygame.K_p:
+                    if configuracoes.pausado:
+                        configuracoes.pausado = False
+                    else:
+                        configuracoes.pausado = True
+    else:
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    #Essa função será a parte de game over, para voltar a jogar basta apertar a tecla "espaço"
+                    configuracoes.reset()
+                elif event.key == pygame.K_ESCAPE:
+                    rodar = False
+    tela.tela()
+    #print(tela.vidas_extras, tela.contagem_ast)
 pygame.quit()
