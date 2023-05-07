@@ -34,3 +34,5 @@ class Disparos(object):
     def checarForaTela(self):
         if self.x < -50 or self.x > configuracoes.largura + 50 or self.y > configuracoes.altura +50 or self.y < -50:
             return True
+        
+

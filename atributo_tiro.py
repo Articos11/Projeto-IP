@@ -17,14 +17,12 @@ class Infinitos(object):
             self.ydirecao = 1
         else :
             self.ydirecao = -1
-        self.xvelocidade = self.xdirecao * 1
-        self.yvelocidade = self.ydirecao * 1
+        self.xvelocidade = self.xdirecao
+        self.yvelocidade = self.ydirecao
 
     def draw(self, janela):
         janela.blit(self.img,(self.x, self.y))
 
     def checarForaTela(self):
-        if self.x < -50 or self.x > configuracoes.largura + 50 or self.y > configuracoes.altura +50 or self.y < -50:
+        if self.x < -100 or self.x > configuracoes.largura + 100 or self.y > configuracoes.altura + 100 or self.y < -100:
             return True
-
-variavel_auxiliar = Infinitos()

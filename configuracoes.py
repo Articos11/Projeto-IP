@@ -1,5 +1,6 @@
 import pygame
 import menu
+import tela
 
 altura = 650
 largura = 1024
@@ -28,5 +29,19 @@ disparo_jogador = pygame.image.load("Assets/laser1.png")
 disparo_jogador = pygame.transform.scale(disparo_jogador, (50,50))
 raio = pygame.image.load("Assets/mult_disp.png")
 raio = pygame.transform.scale(raio, (50,50))
+extra_vida = pygame.image.load("Assets/vidas.png")
+extra_vida = pygame.transform.scale(extra_vida, (50,50))
 
 pausado = False
+
+def reset():
+    tela.gameover = False
+    tela.contagem_ast = 0
+    tela.vidas = 3
+    tela.pontos = 0
+    tela.l_nav_vida = [pygame.Rect(10 + i*30, 10, sprite_vidas.get_width(), sprite_vidas.get_height()) for i in range(tela.vidas)]
+    tela.cometas.clear()
+    tela.tiros.clear()
+    tela.multiplos_tiros.clear()
+    tela.vidas_extras.clear()
+    tela.tiros_rapidos = False
