@@ -16,28 +16,7 @@ def projetil_ast(projetil,ast):
         # Se sim, irá checar em qual altura o disparo colidiu com o asteroide. 
         if (projetil.y >= ast.y and projetil.y <= ast.y + ast.h) or projetil.y + projetil.alt_disparo >= ast.y and projetil.y + projetil.alt_disparo <= ast.y + ast.h:
             # Aqui iremos dividir o asteroide em niveis diferentes.
-            if ast.categoria == 3:
-                tela.pontos += 200
-                novo_asteroide_1 = asteroides.Asteroide(2)
-                novo_asteroide_2 = asteroides.Asteroide(2)
-                novo_asteroide_1.x = ast.x 
-                novo_asteroide_2.x = ast.x
-                novo_asteroide_1.y = ast.y
-                novo_asteroide_2.x = ast.y
-                tela.cometas.append(novo_asteroide_1)
-                tela.cometas.append(novo_asteroide_2)
-            elif ast.categoria == 2:
-                tela.pontos += 100
-                novo_asteroide_1 = asteroides.Asteroide(1)
-                novo_asteroide_2 = asteroides.Asteroide(1)
-                novo_asteroide_1.x = ast.x 
-                novo_asteroide_2.x = ast.x
-                novo_asteroide_1.y = ast.y
-                novo_asteroide_2.x = ast.y
-                tela.cometas.append(novo_asteroide_1)
-                tela.cometas.append(novo_asteroide_2)
-            else:
-                tela.pontos += 50
+            tela.pontos += 50*ast.categoria
             tela.cometas.pop(tela.cometas.index(ast))
             tela.tiros.pop(tela.tiros.index(projetil))
             return True

@@ -17,22 +17,16 @@ pygame.init()
 # Controle de velocidade. 
 clock = pygame.time.Clock()
 FPS = 60
-rodar = True
 
-while rodar:
+while configuracoes.rodar:
 
     clock.tick(FPS)
 
-    if not tela.gameover:
-        if configuracoes.pausado:
-            if configuracoes.botao_Voltar.desenhar_bot(configuracoes.display):
-                configuracoes.pausado = False
-            elif configuracoes.botao_Sair.desenhar_bot(configuracoes.display):
-                rodar = False
-        else:
+    if not tela.gameover and configuracoes.start:
+        if not configuracoes.pausado:
             tela.contagem_ast += 1
-            #aparecimento dos asteroides
-            if tela.contagem_ast % 75 == 0:
+            #aparecimento dos asteroides 
+            if tela.contagem_ast % 30 == 0:
                 ran = random.choice([1,1,1,2,2,3])
                 tela.cometas.append(asteroides.Asteroide(ran))
             #aparecimento do atributo de tiros multiplos
@@ -90,11 +84,12 @@ while rodar:
                 jogador.player.moverTras()
             if keys[pygame.K_SPACE]:
                 if tela.tiros_rapidos:
-                    tela.tiros.append(projeteis.Disparos())
+                    if tela.contagem_ast % 2 == 0:
+                        tela.tiros.append(projeteis.Disparos())
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                rodar = False
+                configuracoes.rodar = False
             # Os disparos foram inseridos aqui para impedir que o jogador dispare infinitas vezes.  
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
@@ -106,14 +101,29 @@ while rodar:
                         configuracoes.pausado = False
                     else:
                         configuracoes.pausado = True
+            
     else:
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    #Essa função será a parte de game over, para voltar a jogar basta apertar a tecla "espaço"
-                    configuracoes.reset()
-                elif event.key == pygame.K_ESCAPE:
-                    rodar = False
+        if tela.gameover:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    configuracoes.rodar = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_SPACE:
+                        #Esse bloco será a parte de game over, para voltar a jogar basta apertar a tecla "espaço"
+                        jogador.player = jogador.Jogador()
+                        configuracoes.reset()
+                    elif event.key == pygame.K_ESCAPE:
+                        configuracoes.rodar = False
+                    
+        elif not configuracoes.start:
+            tela.contagem_ast += 1
+            #aparecimento dos asteroides
+            if tela.contagem_ast % 75 == 0:
+                ran = random.choice([1,1,1,2,2,3])
+                tela.cometas.append(asteroides.Asteroide(ran))
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    configuracoes.rodar = False
     tela.tela()
     #print(tela.vidas_extras, tela.contagem_ast)
 pygame.quit()

@@ -9,9 +9,9 @@ class Jogador(object):
         self.largura = self.imagem.get_width()
         self.altura = self.imagem.get_height()
         # Posição X do jogador.
-        self.x = configuracoes.largura//2
+        self.x = configuracoes.largura//2 - 50
         # Posição Y do jogador. 
-        self.y = configuracoes.altura//2
+        self.y = configuracoes.altura//2 - 50
         # Aqui serão gerados os controles de rotação da nave.
         # Alterar o valor do ângulo irá mudar a posição inicial da nave ao redor do próprio eixo.
         self.angulo = 0
