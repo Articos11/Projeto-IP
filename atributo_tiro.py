@@ -21,6 +21,7 @@ class Infinitos(object):
         self.yvelocidade = self.ydirecao
 
     def draw(self, janela):
+        #pygame.draw.rect(janela, (255, 0, 0), [self.x, self.y, self.w, self.h])
         janela.blit(self.img,(self.x, self.y))
 
     def checarForaTela(self):

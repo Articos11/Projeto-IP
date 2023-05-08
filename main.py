@@ -2,7 +2,6 @@
 import pygame
 import random
 import tela
-import menu
 import projeteis
 import atributo_tiro
 import asteroides
@@ -10,6 +9,7 @@ import jogador
 import configuracoes
 import colisoes
 import atributo_vida
+import sons
 
 # É iniciado o pygame aqui. 
 pygame.init()
@@ -17,6 +17,7 @@ pygame.init()
 # Controle de velocidade. 
 clock = pygame.time.Clock()
 FPS = 60
+sons.mixer.music.play(-1)
 
 while configuracoes.rodar:
 
@@ -25,14 +26,16 @@ while configuracoes.rodar:
     if not tela.gameover and configuracoes.start:
         if not configuracoes.pausado:
             tela.contagem_ast += 1
+            if tela.densidade_ast > 30 and tela.contagem_ast % 150 == 0:
+                tela.densidade_ast -= 1
             #aparecimento dos asteroides 
-            if tela.contagem_ast % 30 == 0:
+            if tela.contagem_ast % tela.densidade_ast == 0:
                 ran = random.choice([1,1,1,2,2,3])
                 tela.cometas.append(asteroides.Asteroide(ran))
             #aparecimento do atributo de tiros multiplos
-            if tela.contagem_ast % 1800 == 0:
+            if tela.contagem_ast % 3100 == 0:
                 tela.multiplos_tiros.append(atributo_tiro.Infinitos())
-            if tela.contagem_ast % 2800 == 0 and tela.vidas < 3:
+            if tela.contagem_ast % 5000 == 0 and tela.vidas < 3:
                 tela.vidas_extras.append(atributo_vida.Vida())
 
             # Aqui é como os projeteis são chamados.
@@ -42,9 +45,12 @@ while configuracoes.rodar:
             for a in tela.cometas:
                 a.x += a.xvelocidade
                 a.y += a.yvelocidade
+                eixo_x = a.x
+                eixo_y = a.y
                 #Checagem de colisão com a nave e diminuição das vidas
-                if colisoes.nave_ast(jogador.player,a):
-                    break
+                if jogador.player.visivel:
+                    if colisoes.nave_ast(jogador.player,a):
+                        break
                 # Checagem de colisão com disparos.
                 for d in tela.tiros :
                     if colisoes.projetil_ast(d,a):
@@ -65,6 +71,7 @@ while configuracoes.rodar:
 
             if tela.vidas <= 0:
                 tela.gameover = True
+                sons.s_derrota.play()
             #vai verificar qnt tempo ja se passou desde que o tiro multiplo foi coletado
             if tela.multiplos_inicio != -1 :
                 # vai ver se passou de 500 
@@ -86,6 +93,7 @@ while configuracoes.rodar:
                 if tela.tiros_rapidos:
                     if tela.contagem_ast % 2 == 0:
                         tela.tiros.append(projeteis.Disparos())
+                        sons.s_tiro.play()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -96,24 +104,21 @@ while configuracoes.rodar:
                     if not tela.gameover:
                         if not tela.tiros_rapidos:
                             tela.tiros.append(projeteis.Disparos())
+                            sons.s_tiro.play()
                 elif event.key == pygame.K_p:
                     if configuracoes.pausado:
+                        sons.mixer.music.unpause()        
                         configuracoes.pausado = False
                     else:
+                        sons.mixer.music.pause()
                         configuracoes.pausado = True
             
     else:
         if tela.gameover:
+            sons.mixer.music.stop()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     configuracoes.rodar = False
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_SPACE:
-                        #Esse bloco será a parte de game over, para voltar a jogar basta apertar a tecla "espaço"
-                        jogador.player = jogador.Jogador()
-                        configuracoes.reset()
-                    elif event.key == pygame.K_ESCAPE:
-                        configuracoes.rodar = False
                     
         elif not configuracoes.start:
             tela.contagem_ast += 1
@@ -124,6 +129,7 @@ while configuracoes.rodar:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     configuracoes.rodar = False
+
     tela.tela()
-    #print(tela.vidas_extras, tela.contagem_ast)
+    #print(jogador.player.visivel)
 pygame.quit()

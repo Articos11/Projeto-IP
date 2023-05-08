@@ -23,11 +23,14 @@ class Jogador(object):
         self.cosseno = math.cos(math.radians(self.angulo))
         self.seno = math.sin(math.radians(self.angulo))
         self.frente = (self.x + 50 + self.cosseno * self.largura//2, self.y + 50 - self.seno * self.largura//2)
+        self.visivel = True
+        self.contador = 0
 
 
     def draw(self, display):
         #pygame.draw.rect(display, (0, 255, 0), [self.x, self.y, self.largura, self.altura])
-        display.blit(self.rotacao, self.rotacaoRect)
+        if 18 < self.contador < 36 or 54 < self.contador < 72 or self.visivel:
+            display.blit(self.rotacao, self.rotacaoRect)
 
     def virarEsquerda(self):
         self.angulo += 3
@@ -58,5 +61,9 @@ class Jogador(object):
         self.cosseno = math.cos(math.radians(self.angulo))
         self.seno = math.sin(math.radians(self.angulo))
         self.frente = (self.x + 50 + self.cosseno * self.largura//2, self.y + 50 - self.seno * self.largura//2)
+
+    def update(self):
+        if not self.visivel:
+            self.contador += 1
 
 player = Jogador()

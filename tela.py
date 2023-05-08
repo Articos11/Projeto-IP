@@ -1,13 +1,16 @@
 import pygame
 import configuracoes
 import jogador
+import sons
 
 tiros = []
 cometas = []
 multiplos_tiros = []
 vidas_extras = []
+explosoes = []
 contagem_ast = 0
 gameover = False
+densidade_ast = 100
 
 # Variavel de controle de mapa.
 i = 0
@@ -29,7 +32,7 @@ def tela():
     texto_g_o = f_gameover.render(f'GAMEOVER', 1, (153, 50, 204))
     f_tentar_nov = pygame.font.SysFont('arial', 40)
     tentar_nov = f_tentar_nov.render(f'Pressione Espaço para jogar de novo', 1, (255, 255, 255))
-    sair = f_tentar_nov.render(f'ou Esc para sair', 1, (255, 255, 255))
+    sair = f_tentar_nov.render(f'ou Esc para voltar ao menu', 1, (255, 255, 255))
     #Jogo pausado
     fonte_Jogo_p = pygame.font.SysFont('kabel ultra', 70)
     jogo_pausado = fonte_Jogo_p.render(f'Jogo Pausado', 1, (153, 50, 204))
@@ -70,11 +73,39 @@ def tela():
                     #barra que vai mudar com o tempo
                     pygame.draw.rect(configuracoes.display, (255,0,0), [configuracoes.largura//2 -50, 20, 100 - 100 * (contagem_ast-multiplos_inicio)/500, 20])
                 #Blit das vidas e dos pontos
+                jogador.player.update()
                 jogador.player.draw(configuracoes.display)
+                if jogador.player.contador >= 90:
+                    jogador.player.contador = 0
+                    jogador.player.visivel = True
+                
+                for x in explosoes:
+                    x.draw(configuracoes.display)
+                    x.update()
+                    if x.contador >= x.velocidade:
+                        explosoes.pop(explosoes.index(x))
             else: #Texto gameover e tentar novamente
-                configuracoes.display.blit(texto_g_o, (configuracoes.largura//2-texto_g_o.get_width()//2, configuracoes.altura//3-texto_g_o.get_height()//3))
-                configuracoes.display.blit(tentar_nov, (configuracoes.largura//2-tentar_nov.get_width()//2, configuracoes.altura//2-tentar_nov.get_height()//2))
-                configuracoes.display.blit(sair, (configuracoes.largura//2-sair.get_width()//2, configuracoes.altura//2-sair.get_height()//2 + 50))
+                configuracoes.display.blit(texto_g_o, (configuracoes.largura//2-texto_g_o.get_width()//2, configuracoes.altura//4-texto_g_o.get_height()//4))
+                #configuracoes.display.blit(tentar_nov, (configuracoes.largura//2-tentar_nov.get_width()//2, configuracoes.altura//2-tentar_nov.get_height()//2))
+                #configuracoes.display.blit(sair, (configuracoes.largura//2-sair.get_width()//2, configuracoes.altura//2-sair.get_height()//2 + 50))
+
+                configuracoes.botao_Jogar.desenhar_bot(configuracoes.display)
+                configuracoes.botao_Sair_iniciar.desenhar_bot(configuracoes.display)
+                configuracoes.botao_Menu.desenhar_bot(configuracoes.display)
+
+                if configuracoes.botao_Jogar.clicado():
+                    configuracoes.botao_Jogar.desenhar_bot(configuracoes.display)
+                    jogador.player = jogador.Jogador()
+                    configuracoes.reset()
+                    sons.mixer.music.play(0,0,0)
+                    configuracoes.pausado = False
+                elif configuracoes.botao_Sair_iniciar.clicado():
+                    configuracoes.botao_Sair_iniciar.desenhar_bot(configuracoes.display)
+                    configuracoes.rodar = False
+                elif configuracoes.botao_Menu.clicado():
+                    configuracoes.botao_Menu.desenhar_bot(configuracoes.display)
+                    configuracoes.start = False
+                    sons.mudar_musica()
             
             configuracoes.display.blit(parte_pontos, (10, 50))
             for nave in l_nav_vida:
@@ -87,13 +118,16 @@ def tela():
             configuracoes.botao_Sair_pause.desenhar_bot(configuracoes.display)
             if configuracoes.botao_Resumir.clicado():
                 configuracoes.botao_Resumir.desenhar_bot(configuracoes.display)
+                sons.mixer.music.unpause()
                 configuracoes.pausado = False
             elif configuracoes.botao_Sair_pause.clicado():
                 configuracoes.botao_Sair_pause.desenhar_bot(configuracoes.display)
                 configuracoes.rodar = False
             elif configuracoes.botao_Menu.clicado():
                 configuracoes.botao_Menu.desenhar_bot(configuracoes.display)
+                sons.mixer.music.stop()
                 configuracoes.start = False
+                sons.mudar_musica()
 
         # Esse bloco irá impedir que o jogador saia das dimensões da tela. 
         if jogador.player.x <= 0:
@@ -119,7 +153,7 @@ def tela():
             a.draw(configuracoes.display)
             if a.checarForaTela():
                 cometas.pop(cometas.index(a))
-        configuracoes.display.blit(configuracoes.logo, (configuracoes.largura//2-configuracoes.logo.get_width()//2.2, configuracoes.altura//4-configuracoes.logo.get_width()//2))
+        configuracoes.display.blit(configuracoes.logo, (configuracoes.largura//2-configuracoes.logo.get_width()//2.2, configuracoes.altura//3.5-configuracoes.logo.get_width()//2))
         configuracoes.botao_Jogar.desenhar_bot(configuracoes.display)
         configuracoes.botao_Sair_iniciar.desenhar_bot(configuracoes.display)
         
@@ -127,6 +161,7 @@ def tela():
             configuracoes.botao_Jogar.desenhar_bot(configuracoes.display)
             configuracoes.reset()
             configuracoes.start = True
+            sons.mudar_musica()
             configuracoes.pausado = False
         if configuracoes.botao_Sair_iniciar.clicado():
             configuracoes.botao_Sair_iniciar.desenhar_bot(configuracoes.display)

@@ -31,13 +31,13 @@ im_Menu = pygame.image.load("Assets/Botoes/Botao_menu.png").convert_alpha()
 im_Menu = pygame.transform.scale(im_Menu, (140, 70))
 im_Menu_apert = pygame.image.load("Assets/Botoes/Botao_menu_apertado.png").convert_alpha()
 im_Menu_apert = pygame.transform.scale(im_Menu_apert, (140, 70))
-botao_Menu = menu.Botao(largura / 2, altura / 2, im_Menu, 1, im_Menu_apert)
+botao_Menu = menu.Botao(largura / 2, altura / 3, im_Menu, 1, im_Menu_apert)
     #Resumir
 im_Resumir = pygame.image.load("Assets/Botoes/Botao_resumir.png").convert_alpha()
 im_Resumir = pygame.transform.scale(im_Resumir, (140, 70))
 im_Resumir_apert = pygame.image.load("Assets/Botoes/Botao_resumir_apertado.png").convert_alpha()
 im_Resumir_apert = pygame.transform.scale(im_Resumir_apert, (140, 70))
-botao_Resumir = menu.Botao(largura / 2, altura / 3, im_Resumir, 1, im_Resumir_apert)
+botao_Resumir = menu.Botao(largura / 2, altura / 2, im_Resumir, 1, im_Resumir_apert)
     #Sair
         #Botão Sair quando esta pausado
 im_Sair = pygame.image.load("Assets/Botoes/Botao_sair.png").convert_alpha()
@@ -63,10 +63,13 @@ raio = pygame.image.load("Assets/mult_disp.png")
 raio = pygame.transform.scale(raio, (50,50))
 extra_vida = pygame.image.load("Assets/vidas.png")
 extra_vida = pygame.transform.scale(extra_vida, (50,50))
+explosao_ast = pygame.image.load("Assets/explosao_2.png")
+#explosao_ast = pygame.transform.scale(explosao_ast, (300,300))
 
 def reset():
     tela.gameover = False
     tela.contagem_ast = 0
+    tela.densidade_ast = 100
     tela.vidas = 3
     tela.pontos = 0
     tela.l_nav_vida = [pygame.Rect(10 + i*30, 10, sprite_vidas.get_width(), sprite_vidas.get_height()) for i in range(tela.vidas)]
@@ -74,4 +77,5 @@ def reset():
     tela.tiros.clear()
     tela.multiplos_tiros.clear()
     tela.vidas_extras.clear()
+    tela.explosoes.clear()
     tela.tiros_rapidos = False

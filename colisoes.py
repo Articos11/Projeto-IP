@@ -1,24 +1,33 @@
 import tela
+import sons
 import asteroides
+import jogador
 def nave_ast(nave,ast):
+    categoria = ast.categoria
     if (nave.x >= ast.x and nave.x <= ast.x + ast.w) or (nave.x + nave.largura >= ast.x and nave.x + nave.largura <= ast.x + ast.w):
         if (nave.y >= ast.y and nave.y <= ast.y + ast.h) or (nave.y + nave.altura >= ast.y and nave.y + nave.altura <= ast.y + ast.h):
             tela.vidas -= 1
+            jogador.player.visivel = False
             for v in tela.l_nav_vida:
                 if tela.l_nav_vida.index(v) == len(tela.l_nav_vida) - 1:
                     tela.l_nav_vida.pop(tela.l_nav_vida.index(v))
+            tela.explosoes.append(asteroides.Explosao(ast.x,ast.y,categoria))
             tela.cometas.pop(tela.cometas.index(ast))
+            sons.s_explosao.play()
             return True
 
 def projetil_ast(projetil,ast):
+    categoria = ast.categoria
     # Irá checar se o disparo colide com a largura total do asteroide.
     if (projetil.x >= ast.x and projetil.x <= ast.x + ast.w) or projetil.x + projetil.lar_disparo >= ast.x and projetil.x + projetil.lar_disparo <= ast.x + ast.w:
         # Se sim, irá checar em qual altura o disparo colidiu com o asteroide. 
         if (projetil.y >= ast.y and projetil.y <= ast.y + ast.h) or projetil.y + projetil.alt_disparo >= ast.y and projetil.y + projetil.alt_disparo <= ast.y + ast.h:
             # Aqui iremos dividir o asteroide em niveis diferentes.
             tela.pontos += 50*ast.categoria
+            tela.explosoes.append(asteroides.Explosao(ast.x,ast.y,categoria))
             tela.cometas.pop(tela.cometas.index(ast))
             tela.tiros.pop(tela.tiros.index(projetil))
+            sons.s_explosao.play()
             return True
 
 def atributo_tiro(atributo,nave):
@@ -31,12 +40,14 @@ def atributo_tiro(atributo,nave):
                 tela.multiplos_tiros.pop(tela.multiplos_tiros.index(atributo))
                 tela.multiplos_inicio = tela.contagem_ast
                 tela.tiros.pop(tela.tiros.index(d))
+                sons.s_atributo_tiro.play()
                 return True
     if (nave.x >= atributo.x and nave.x <= atributo.x + atributo.w) or (nave.x + nave.largura >= atributo.x and nave.x + nave.largura <= atributo.x + atributo.w):
         if (nave.y >= atributo.y and nave.y <= atributo.y + atributo.h) or (nave.y + nave.altura >= atributo.y and nave.y + nave.altura <= atributo.y + atributo.h):
             tela.tiros_rapidos = True
             tela.multiplos_tiros.pop(tela.multiplos_tiros.index(atributo))
             tela.multiplos_inicio = tela.contagem_ast
+            sons.s_atributo_tiro.play()
             return True
         
 def atributo_vida(atributo,nave):
@@ -48,9 +59,11 @@ def atributo_vida(atributo,nave):
                 tela.vidas_extras.pop(tela.vidas_extras.index(atributo))
                 tela.tiros.pop(tela.tiros.index(d))
                 tela.vidas += 1
+                sons.s_atributo_vida.play()
                 return True
     if (nave.x >= atributo.x and nave.x <= atributo.x + atributo.w) or (nave.x + nave.largura >= atributo.x and nave.x + nave.largura <= atributo.x + atributo.w):
         if (nave.y >= atributo.y and nave.y <= atributo.y + atributo.h) or (nave.y + nave.altura >= atributo.y and nave.y + nave.altura <= atributo.y + atributo.h):
             tela.vidas_extras.pop(tela.vidas_extras.index(atributo))
             tela.vidas += 1
+            sons.s_atributo_vida.play()
             return True

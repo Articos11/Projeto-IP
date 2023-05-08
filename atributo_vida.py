@@ -20,7 +20,7 @@ class Vida(object) :
         self.yvelocidade = self.ydirecao
 
     def draw(self, janela):
-        #pygame.draw.rect(janela, (0, 0, 255), [self.x, self.y, self.w, self.h])
+        #pygame.draw.rect(janela, (255, 0, 0), [self.x, self.y, self.w, self.h])
         janela.blit(self.imagem,(self.x, self.y))
 
     def checarForaTela(self):
