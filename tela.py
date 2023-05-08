@@ -2,12 +2,14 @@ import pygame
 import configuracoes
 import jogador
 import sons
+import buraco
 
 tiros = []
 cometas = []
 multiplos_tiros = []
 vidas_extras = []
 explosoes = []
+nenhum_tiro = []
 contagem_ast = 0
 gameover = False
 densidade_ast = 100
@@ -18,6 +20,7 @@ i = 0
 vidas = 3
 pontos = 0
 tiros_rapidos = False
+zero_tiros = False
 multiplos_inicio = -1
 l_nav_vida = [pygame.Rect(10 + i*30, 10, configuracoes.sprite_vidas.get_width(), configuracoes.sprite_vidas.get_height()) for i in range(vidas)]
 
@@ -32,7 +35,6 @@ def tela():
     texto_g_o = f_gameover.render(f'GAMEOVER', 1, (153, 50, 204))
     f_tentar_nov = pygame.font.SysFont('arial', 40)
     tentar_nov = f_tentar_nov.render(f'Pressione Espaço para jogar de novo', 1, (255, 255, 255))
-    sair = f_tentar_nov.render(f'ou Esc para voltar ao menu', 1, (255, 255, 255))
     #Jogo pausado
     fonte_Jogo_p = pygame.font.SysFont('kabel ultra', 70)
     jogo_pausado = fonte_Jogo_p.render(f'Jogo Pausado', 1, (153, 50, 204))
@@ -50,6 +52,9 @@ def tela():
                     i = 0
                 i -= 2
                 #Desenho dos objetos
+                if contagem_ast >= sons.ast_prog[3][0]:
+                    buraco.bur.draw(configuracoes.display)
+                    buraco.bur.update()
                 for a in cometas:
                     a.draw(configuracoes.display)
                     if a.checarForaTela():
@@ -66,8 +71,12 @@ def tela():
                     e.draw(configuracoes.display)
                     if e.checarForaTela():
                         vidas_extras.pop(vidas_extras.index(e))
+                for n in nenhum_tiro:
+                    n.draw(configuracoes.display)
+                    if n.checarForaTela():
+                        nenhum_tiro.pop(nenhum_tiro.index(n))
                 #barra de contagem de tempo que o jogador tera com o tiros rapidos
-                if tiros_rapidos :
+                if tiros_rapidos or zero_tiros:
                     #quadrado preto
                     pygame.draw.rect(configuracoes.display, (0,0,0), [configuracoes.largura//2 -51, 19, 102, 22])
                     #barra que vai mudar com o tempo
@@ -84,11 +93,9 @@ def tela():
                     x.update()
                     if x.contador >= x.velocidade:
                         explosoes.pop(explosoes.index(x))
+
             else: #Texto gameover e tentar novamente
                 configuracoes.display.blit(texto_g_o, (configuracoes.largura//2-texto_g_o.get_width()//2, configuracoes.altura//4-texto_g_o.get_height()//4))
-                #configuracoes.display.blit(tentar_nov, (configuracoes.largura//2-tentar_nov.get_width()//2, configuracoes.altura//2-tentar_nov.get_height()//2))
-                #configuracoes.display.blit(sair, (configuracoes.largura//2-sair.get_width()//2, configuracoes.altura//2-sair.get_height()//2 + 50))
-
                 configuracoes.botao_Jogar.desenhar_bot(configuracoes.display)
                 configuracoes.botao_Sair_iniciar.desenhar_bot(configuracoes.display)
                 configuracoes.botao_Menu.desenhar_bot(configuracoes.display)

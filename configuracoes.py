@@ -64,7 +64,8 @@ raio = pygame.transform.scale(raio, (50,50))
 extra_vida = pygame.image.load("Assets/vidas.png")
 extra_vida = pygame.transform.scale(extra_vida, (50,50))
 explosao_ast = pygame.image.load("Assets/explosao_2.png")
-#explosao_ast = pygame.transform.scale(explosao_ast, (300,300))
+raio_reverso = pygame.image.load("Assets/nenhum_disp.png")
+raio_reverso = pygame.transform.scale(raio_reverso, (50,50))
 
 def reset():
     tela.gameover = False
@@ -78,4 +79,5 @@ def reset():
     tela.multiplos_tiros.clear()
     tela.vidas_extras.clear()
     tela.explosoes.clear()
+    tela.nenhum_tiro.clear()
     tela.tiros_rapidos = False

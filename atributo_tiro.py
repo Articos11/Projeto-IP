@@ -2,8 +2,8 @@ import configuracoes
 import random
 
 class Infinitos(object):
-    def __init__(self):
-        self.img = configuracoes.raio
+    def __init__(self,imagem):
+        self.img = imagem
         self.w = self.img.get_width()
         self.h = self.img.get_height()
         #para que o atributo venha de lugares aleatorios 

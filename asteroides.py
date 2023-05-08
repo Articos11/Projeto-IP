@@ -1,6 +1,8 @@
 import pygame
 import random
 import configuracoes
+import tela
+import sons
 
 class Asteroide(object) :
     def __init__(self, categoria):
@@ -22,7 +24,11 @@ class Asteroide(object) :
         if self.y < configuracoes.altura // 2:
             self.ydirecao = 1
         else :
-            self.ydirecao = -1
+            if tela.contagem_ast < sons.ast_prog[2][0]:
+                self.ydirecao = -1
+            else:
+                tela.densidade_ast = 1
+                self.ydirecao = +1
         self.xvelocidade = self.xdirecao * random.randrange(1,3)
         self.yvelocidade = self.ydirecao * random.randrange(1,3)
 

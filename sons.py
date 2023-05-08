@@ -25,3 +25,9 @@ s_explosao = pygame.mixer.Sound("Assets/Musica/explosion.wav")
 mixer.Sound.set_volume(s_explosao, 0.5)
 s_menu = pygame.mixer.Sound("Assets/Musica/menu.wav")
 s_derrota = pygame.mixer.Sound("Assets/Musica/defeat.wav")
+
+
+#sincronia com a musica
+ast_prog = [[11113,12980],[11304],[19319],[21723],[22446]]
+
+rep_ast = []
