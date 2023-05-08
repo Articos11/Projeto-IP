@@ -28,6 +28,4 @@ s_derrota = pygame.mixer.Sound("Assets/Musica/defeat.wav")
 
 
 #sincronia com a musica
-ast_prog = [[11113,12980],[11304],[19319],[21723],[22446]]
-
-rep_ast = []
+ast_prog = [[11113,12980],[11304],[19319],[20160],[22446]]

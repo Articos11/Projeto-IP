@@ -29,6 +29,10 @@ while configuracoes.rodar:
             tela.contagem_ast += 1
             if tela.contagem_ast > sons.ast_prog[0][1]:
                 tela.densidade_ast = 100
+            elif tela.contagem_ast > sons.ast_prog[2][0]:
+                tela.densidade_ast = 1
+                tela.cometas.append(asteroides.Asteroide(ran))
+                tela.cometas.append(asteroides.Asteroide(ran))
             if tela.densidade_ast > 30 and tela.contagem_ast % 150 == 0:
                 tela.densidade_ast -= 1
             #aparecimento dos asteroides 
@@ -107,7 +111,8 @@ while configuracoes.rodar:
             if keys[pygame.K_RIGHT]:
                 jogador.player.virarDireita()
             if keys[pygame.K_UP]:
-                jogador.player.moverFrente()
+                if tela.contagem_ast < 22146:
+                    jogador.player.moverFrente()
             if keys[pygame.K_DOWN]:
                 jogador.player.moverTras()
             if keys[pygame.K_SPACE]:
@@ -115,6 +120,11 @@ while configuracoes.rodar:
                     if tela.contagem_ast % 2 == 0:
                         tela.tiros.append(projeteis.Disparos())
                         sons.s_tiro.play()
+            if tela.contagem_ast == 22146:
+                velx = (configuracoes.largura - jogador.player.x)/300
+            if tela.contagem_ast >= 22386:
+                jogador.player.x += velx
+                jogador.player.calcular()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

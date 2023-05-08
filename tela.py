@@ -12,6 +12,7 @@ explosoes = []
 nenhum_tiro = []
 contagem_ast = 0
 gameover = False
+fim = False
 densidade_ast = 100
 
 # Variavel de controle de mapa.
@@ -117,6 +118,22 @@ def tela():
             configuracoes.display.blit(parte_pontos, (10, 50))
             for nave in l_nav_vida:
                 configuracoes.display.blit(configuracoes.sprite_vidas, nave)
+
+            if fim:
+                    pygame.draw.rect(configuracoes.display, (0,0,0), [0,0,configuracoes.largura,configuracoes.altura])
+                    frase_final = fonte_Jogo_p.render(f'Fim de Jogo', 1, (153, 50, 204))
+                    pontuacao_final = fonte_Jogo_p.render(f'Sua pontuação foi {pontos}', 1, (153, 50, 204))
+                    alerta_final = fonte_Jogo_p.render(f'Não há vida para além da Terra.', 1, (153, 50, 204))
+                    configuracoes.display.blit(frase_final, (configuracoes.largura//2-frase_final.get_width()//2, configuracoes.altura//4-frase_final.get_height()//4))
+                    configuracoes.display.blit(pontuacao_final, (configuracoes.largura//2-pontuacao_final.get_width()//2, configuracoes.altura//2-pontuacao_final.get_height()//2))
+                    configuracoes.display.blit(alerta_final, (configuracoes.largura//2-alerta_final.get_width()//2, configuracoes.altura//1.5-alerta_final.get_height()//1.5))   
+                    configuracoes.botao_Menu.desenhar_bot(configuracoes.display)
+                    if configuracoes.botao_Menu.clicado():
+                        configuracoes.botao_Menu.desenhar_bot(configuracoes.display)
+                        sons.mixer.music.stop()
+                        configuracoes.start = False
+                        configuracoes.reset()
+                        sons.mudar_musica()
         else:
             configuracoes.display.blit(jogo_pausado, (configuracoes.largura//2-tentar_nov.get_width()/3.3, configuracoes.altura//10-tentar_nov.get_height()//2))
             configuracoes.display.blit(deseja_fazer, (configuracoes.largura//2-tentar_nov.get_width()/2.4, configuracoes.altura//4.5-tentar_nov.get_height()//2))
@@ -168,6 +185,8 @@ def tela():
             configuracoes.botao_Jogar.desenhar_bot(configuracoes.display)
             configuracoes.reset()
             configuracoes.start = True
+            jogador.player.x = configuracoes.largura//2 - 50
+            jogador.player.y = configuracoes.altura//2 - 50
             sons.mudar_musica()
             configuracoes.pausado = False
         if configuracoes.botao_Sair_iniciar.clicado():

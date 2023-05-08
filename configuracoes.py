@@ -81,3 +81,4 @@ def reset():
     tela.explosoes.clear()
     tela.nenhum_tiro.clear()
     tela.tiros_rapidos = False
+    tela.fim = False

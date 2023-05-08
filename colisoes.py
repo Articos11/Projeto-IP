@@ -104,5 +104,9 @@ def c_buraco(buraco,nave):
                 return True
     if (nave.x >= buraco.x and nave.x <= buraco.x + buraco.largura) or (nave.x + nave.largura >= buraco.x and nave.x + nave.largura <= buraco.x + buraco.largura):
         if (nave.y >= buraco.y and nave.y <= buraco.y + buraco.altura) or (nave.y + nave.altura >= buraco.y and nave.y + nave.altura <= buraco.y + buraco.altura):
-            tela.vidas -= 10
+            if tela.contagem_ast < 22146:
+                tela.vidas -= 10
+            else:
+                tela.gameover = True
+                tela.fim = True
             return True
