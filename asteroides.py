@@ -16,19 +16,29 @@ class Asteroide(object) :
         self.w = 50*categoria
         self.h = 50*categoria
         self.ranPoint = random.choice([(random.randrange(0, configuracoes.largura-self.w), random.choice([-1 * self.h - 5, configuracoes.altura+5])),(random.choice([-1*self.w - 5, configuracoes.largura+5]), random.randrange(0, configuracoes.altura-self.h))])
-        self.x, self.y = self.ranPoint
+        self.rany = random.randint(50,600)
+        if tela.contagem_ast < sons.ast_prog[2][0]:
+            self.x, self.y = self.ranPoint
+        else:
+            self.x = -30
+            self.y = self.rany
         if self.x < configuracoes.largura // 2:
             self.xdirecao = 1
-        else :
-            self.xdirecao = -1
+        else:
+            if tela.contagem_ast < sons.ast_prog[2][0]:
+                self.xdirecao = -1
+            else:
+                self.xdirecao = 1
         if self.y < configuracoes.altura // 2:
-            self.ydirecao = 1
+            if tela.contagem_ast < sons.ast_prog[2][0]:
+                self.ydirecao = 1
+            else:
+                self.ydirecao = 0
         else :
             if tela.contagem_ast < sons.ast_prog[2][0]:
                 self.ydirecao = -1
             else:
-                tela.densidade_ast = 1
-                self.ydirecao = +1
+                self.ydirecao = 0
         self.xvelocidade = self.xdirecao * random.randrange(1,3)
         self.yvelocidade = self.ydirecao * random.randrange(1,3)
 
