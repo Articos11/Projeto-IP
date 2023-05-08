@@ -32,7 +32,7 @@ class Disparos(object):
 
     # Isso aqui deleta qualquer disparo fora da tela pra economizar memória.
     def checarForaTela(self):
-        if self.x < -50 or self.x > configuracoes.largura + 50 or self.y > configuracoes.altura +50 or self.y < -50:
+        if self.x < -10 or self.x > configuracoes.largura + 10 or self.y > configuracoes.altura +10 or self.y < -10:
             return True
         
 

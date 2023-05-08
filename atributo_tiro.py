@@ -2,8 +2,8 @@ import configuracoes
 import random
 
 class Infinitos(object):
-    def __init__(self):
-        self.img = configuracoes.raio
+    def __init__(self,imagem):
+        self.img = imagem
         self.w = self.img.get_width()
         self.h = self.img.get_height()
         #para que o atributo venha de lugares aleatorios 
@@ -21,6 +21,7 @@ class Infinitos(object):
         self.yvelocidade = self.ydirecao
 
     def draw(self, janela):
+        #pygame.draw.rect(janela, (255, 0, 0), [self.x, self.y, self.w, self.h])
         janela.blit(self.img,(self.x, self.y))
 
     def checarForaTela(self):

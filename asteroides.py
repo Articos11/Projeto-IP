@@ -1,6 +1,8 @@
-#import pygame
+import pygame
 import random
 import configuracoes
+import tela
+import sons
 
 class Asteroide(object) :
     def __init__(self, categoria):
@@ -22,14 +24,37 @@ class Asteroide(object) :
         if self.y < configuracoes.altura // 2:
             self.ydirecao = 1
         else :
-            self.ydirecao = -1
+            if tela.contagem_ast < sons.ast_prog[2][0]:
+                self.ydirecao = -1
+            else:
+                tela.densidade_ast = 1
+                self.ydirecao = +1
         self.xvelocidade = self.xdirecao * random.randrange(1,3)
         self.yvelocidade = self.ydirecao * random.randrange(1,3)
 
-    def draw(self, janela):
-        #pygame.draw.rect(janela, (0, 0, 255), [self.x, self.y, self.w, self.h])
-        janela.blit(self.imagem,(self.x, self.y))
+    def draw(self, display):
+        #pygame.draw.rect(display, (0, 0, 255), [self.x, self.y, self.w, self.h])
+        display.blit(self.imagem,(self.x, self.y))
 
     def checarForaTela(self):
-        if self.x < -50 or self.x > configuracoes.largura + 50 or self.y > configuracoes.altura +50 or self.y < -50:
+        if self.x < -100 or self.x > configuracoes.largura + 100 or self.y > configuracoes.altura +100 or self.y < -100:
             return True
+        
+class Explosao(object):
+    def __init__(self, x, y,categoria):
+        self.categoria = categoria
+        tamanho = 50*categoria
+        self.imagem = configuracoes.explosao_ast
+        self.imagem = pygame.transform.scale(self.imagem, (tamanho,tamanho))
+        self.x = x
+        self.y = y
+        self.rect = self.imagem.get_rect()
+        #self.rect.center = (x, y)
+        self.contador = 0
+        self.velocidade = 30
+    
+    def update(self):
+        self.contador += 1
+    
+    def draw(self, display):
+        display.blit(self.imagem,(self.x, self.y))
